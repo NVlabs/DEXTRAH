@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+
+<robot name="object_teapot">
+    <static>false</static>
+    <link name="baseLink">
+        <inertial>
+            <mass value="0.1000721657845513"/>
+            <inertia ixx="4.6077783999726894e-05" ixy="3.16005118213017e-07" ixz="3.3181458711348366e-10"
+                     iyy="6.922168700498709e-05" iyz="4.180396306875361e-11" izz="5.5095781200786195e-05"/>
+        </inertial>
+        <collision name="collision">
+            <geometry>
+                <mesh filename="collision_model_vhacd.obj"/>
+            </geometry>
+        </collision>
+        <visual name="visual">
+            <geometry>
+                <mesh filename="visual_model.obj"/>
+            </geometry>
+        </visual>
+    </link>
+</robot>

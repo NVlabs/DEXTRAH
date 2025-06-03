@@ -1,0 +1,17 @@
+*egg-info
+__pycache__
+*.swp
+logs
+*.npy
+.thumbs/
+
+runs/
+pretrained_ckpts/
+wandb/
+outputs/
+background_imgs/
+dome_light_textures/
+object_textures/
+table_textures/
+curated_table_textures/
+eval_results/

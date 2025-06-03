@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+
+<robot name="object_apycoeg3">
+    <static>false</static>
+    <link name="baseLink">
+        <inertial>
+            <mass value="0.16506739774530427"/>
+            <inertia ixx="0.00010563274362310932" ixy="-1.3449383745379408e-06" ixz="-6.819197376261436e-06"
+                     iyy="0.00012358730039589065" iyz="-2.3765599212409815e-07" izz="0.00016245032848560473"/>
+        </inertial>
+        <collision name="collision">
+            <geometry>
+                <mesh filename="collision_model_vhacd.obj"/>
+            </geometry>
+        </collision>
+        <visual name="visual">
+            <geometry>
+                <mesh filename="visual_model.obj"/>
+            </geometry>
+        </visual>
+    </link>
+</robot>

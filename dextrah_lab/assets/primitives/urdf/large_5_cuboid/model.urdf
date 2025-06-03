@@ -1,0 +1,21 @@
+<?xml version='1.0'?>
+
+<robot name="object_large_5_cuboid">
+    <static>false</static>
+    <link name="baseLink">
+        <inertial>
+            <mass value="0.1"/>
+            <inertia ixx="1e-4" ixy="0." ixz="0." iyy="1e-4" iyz="0." izz="1e-4"/>
+        </inertial>
+        <collision name="collision">
+            <geometry>
+                <mesh filename="large_5_cuboid.stl"/>
+            </geometry>
+        </collision>
+        <visual name="visual">
+            <geometry>
+                <mesh filename="large_5_cuboid_simple.stl"/>
+            </geometry>
+        </visual>
+    </link>
+</robot>
