@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+
+<robot name="object_blub_triangulated">
+    <static>false</static>
+    <link name="baseLink">
+        <inertial>
+            <mass value="0.14481490351354664"/>
+            <inertia ixx="0.00011088806304298152" ixy="5.556555210497401e-11" ixz="-1.862296126508091e-10"
+                     iyy="0.00010734847060106326" iyz="3.3642371434810064e-06" izz="7.189765928766018e-05"/>
+        </inertial>
+        <collision name="collision">
+            <geometry>
+                <mesh filename="collision_model_vhacd.obj"/>
+            </geometry>
+        </collision>
+        <visual name="visual">
+            <geometry>
+                <mesh filename="visual_model.obj"/>
+            </geometry>
+        </visual>
+    </link>
+</robot>

@@ -1,0 +1,22 @@
+<?xml version='1.0'?>
+
+<robot name="object_282141">
+    <static>false</static>
+    <link name="baseLink">
+        <inertial>
+            <mass value="0.10490217922788408"/>
+            <inertia ixx="0.00010390655558965958" ixy="-6.551141808855761e-07" ixz="-5.5741096405265554e-06"
+                     iyy="0.00010544786028539042" iyz="-8.982651562779069e-06" izz="5.31168014497452e-05"/>
+        </inertial>
+        <collision name="collision">
+            <geometry>
+                <mesh filename="collision_model_vhacd.obj"/>
+            </geometry>
+        </collision>
+        <visual name="visual">
+            <geometry>
+                <mesh filename="visual_model.obj"/>
+            </geometry>
+        </visual>
+    </link>
+</robot>
