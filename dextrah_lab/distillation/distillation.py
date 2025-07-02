@@ -213,6 +213,8 @@ class Dagger:
                     notes=os.environ["WANDB_NOTES"],
                     # sync_tensorboard=True,
                 )
+        else:
+            self.use_wandb = False
         self.scaler = GradScaler()
         wp.init()
         self.depth_aug = DepthAug(f"cuda:{self.local_rank}")
@@ -221,8 +223,8 @@ class Dagger:
         self.aux_coeff = self.ov_env.cfg.aux_coeff
         self.depth_aug_cfg = self.ov_env.cfg.depth_randomization_cfg_dict
         self.stereo = self.ov_env.cfg.simulate_stereo
-        self.viz_depth = False
-        if self.viz_depth:
+        self.viz_imgs = False
+        if self.viz_imgs:
             self.fig, (self.ax1, self.ax2) = plt.subplots(1, 2, figsize=(10, 5))
 
             x = np.linspace(0, 50., num=self.ov_env.cfg.img_width)
@@ -382,18 +384,6 @@ class Dagger:
             else:
                 self.finetune_backbone = True
 
-            # save depth img from every other frame
-            # if self.img_aug_type == "depth":
-            even_indices = torch.where(self.env_counter % 2 == 0)[0]
-            if self.stereo:
-                self.depth_buffers_left[even_indices] = obs['depth_left'][even_indices]
-                self.depth_buffers_right[even_indices] = obs['depth_right'][even_indices]
-                obs['depth_left'] = self.depth_buffers_left
-                obs['depth_right'] = self.depth_buffers_right
-            else:
-                self.depth_buffers[even_indices] = obs['img'][even_indices]
-                obs['img'] = self.depth_buffers
-
             if self.img_aug_type == "depth" and self.use_depth_aug:
                 obs["img"] = self.augment_depth(obs["img"])
                 obs["img"][obs["img"] > self.ov_env.cfg.d_max] = 0.
@@ -412,18 +402,17 @@ class Dagger:
                     aug_output = self.rgb_aug.apply(imgs, masks)
                     obs["img_left"] = aug_output["left_img"]
                     obs["img_right"] = aug_output["right_img"]
-                    self.rgb_buffers_left[even_indices] = obs['img_left'][even_indices]
-                    obs['img_left'] = self.rgb_buffers_left
                     obs['img_right'] = torch.flip(obs['img_right'], dims=(2,3))
-                    self.rgb_buffers_right[even_indices] = obs['img_right'][even_indices]
-                    obs['img_right'] = self.rgb_buffers_right
                 else:
                     if self.img_aug_type == "rgb":
                         obs["rgb"] = self.rgb_aug.apply(obs["rgb"], obs["mask"])
                         self.rgb_buffers[even_indices] = obs['rgb'][even_indices]
                         obs['rgb'] = self.rgb_buffers
+            else:
+                obs['img_right'] = torch.flip(obs['img_right'], dims=(2,3))
 
-            if self.viz_depth:
+
+            if self.viz_imgs:
                 if self.stereo:
                     obj_uv_left = obs["obj_uv_left"][2].clone().detach().cpu().numpy()
                     obj_uv_right = obs["obj_uv_right"][2].clone().detach().cpu().numpy()
@@ -435,10 +424,10 @@ class Dagger:
                     obj_uv_left = obj_uv_left.astype(np.int32)
                     obj_uv_right = obj_uv_right.astype(np.int32)
                     rgb_img = obs["img_left"][2].clone().detach().cpu().numpy().transpose(1, 2, 0)
-                    rgb_img[obj_uv_left[1]-4:obj_uv_left[1]+4, obj_uv_left[0]-4:obj_uv_left[0]+4, :] = [1, 1, 1]
+                    # rgb_img[obj_uv_left[1]-4:obj_uv_left[1]+4, obj_uv_left[0]-4:obj_uv_left[0]+4, :] = [1, 1, 1]
                     self.rendered_img1.set_data(rgb_img)
                     rgb_img = obs["img_right"][2].clone().detach().cpu().numpy().transpose(1, 2, 0)
-                    rgb_img[obj_uv_right[1]-4:obj_uv_right[1]+4, obj_uv_right[0]-4:obj_uv_right[0]+4, :] = [1, 1, 1]
+                    # rgb_img[obj_uv_right[1]-4:obj_uv_right[1]+4, obj_uv_right[0]-4:obj_uv_right[0]+4, :] = [1, 1, 1]
                     self.rendered_img2.set_data(rgb_img)
                 else:
                     rgb_img = obs["rgb"][0].clone().detach().cpu().numpy().transpose(1, 2, 0)
