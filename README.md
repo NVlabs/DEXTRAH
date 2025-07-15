@@ -9,79 +9,26 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
         git fetch origin
         git checkout v2.0.2
 ```
-2. Install geometric fabrics.
-**Note**: Needs to checkout the branch `develop` for everything to work properly. This will be more formalized once we have a more stabilized main.
+2. Install geometric fabrics from this repo:
 ```bash
-        git clone https://gitlab-master.nvidia.com/srl/fabrics-sim
-        cd <fabrics-sim root>
-        git checkout develop
-        pip install .
-        # If isaac sim was installed with pip or conda
-        ./urdfpy_patch.sh
-        # If isaac sim already installed within official docker container
-        ./urdfpy_patch.sh --docker
+        https://github.com/NVlabs/FABRICS
+
 ```
 
 3. Install Dextrah for Isaac Lab
 ```bash
-        git clone https://gitlab-master.nvidia.com/kvanwyk/dextrah-lab-internal.git
-        cd <dextrah-lab-internal>
-        pip install -e .
+        curl -sSL https://install.python-poetry.org | python3 -
+        git lfs clone git@github.com:NVlabs/DEXTRAH.git
+        cd <DEXTRAH>
+        poetry init --name "dextrah_lab" --no-interaction
+        xargs poetry add < deps.txt
+        poetry install
 ```
 
-## Installation with building Isaac Lab image and using docker
-1. Download Isaac Lab from public repo and check out tag
-
-        git clone https://github.com/isaac-sim/IsaacLab.git
-        cd IsaacLab
-        git checkout v2.0.2
-
-2. Build base Isaac Lab docker image. First, [setup docker and log into nvcr.io](https://isaac-sim.github.io/IsaacLab/main/source/deployment/docker.html#obtaining-the-isaac-sim-container). Then, build the base Isaac Lab image and shut down its container
-```bash
-        cd IsaacLab
-        ./docker/container.py start
-        ./docker/container.py stop
-```
-3. Download Dextrah
-```bash
-        git clone https://gitlab-master.nvidia.com/kvanwyk/dextrah-lab-internal.git
-```
-4. Spin up a new container that targets the base Isaac Lab image along with various env variables
-```bash
-        cd <dextrah-lab-internal/dextrah_lab/docker>
-        docker run -it --env-file .env --entrypoint bash --gpus all --network host isaac-lab-base
-```
-5. In a separate terminal, commit the running container to a new image, isaac-lab-dextrah with v1 tag
-```bash
-        docker commit <container_id> isaac-lab-dextrah:v1
-```
-6. Kill the running container
-```bash
-        docker kill <container_id>
-```
-7. Target the new image along with binding in fabrics and dextrah repos:
-```bash
-        docker run -it --entrypoint bash -v /local_path_to_dextrah/dextrah-lab-internal:/workspace/dextrah-lab-internal -v /local_path_to_fabrics/fabrics-sim:/workspace/fabrics-sim --gpus all --network host isaac-lab-dextrah:v1
-```
-8. Install fabrics inside container
-```bash
-        cd /workspace/fabrics-sim
-        /isaac-sim/python.sh -m pip install .
-        ./urdfpy_patch --docker
-```
-9. Install dextrah inside container in editable mode
-```bash
-        cd /workspace/dextrah-lab-internal
-        /isaac-sim/python.sh -m pip install -e .
-```
-10. Train Dextrah using same commands below inside the container except use `/isaac-sim/python.sh` instead of `python`. You may also consider to save a commit before existing the container to preserve all the installation.
-```bash
-        docker commit <container_id> isaac-lab-dextrah-installed
-```
 ## DextrAH Privileged FGP Teacher Training
 1. Single-GPU training
 ```bash
-        cd <dextrah_lab root>/dextrah_lab/rl_games
+        cd <DEXTRAH>/dextrah_lab/rl_games
         python train.py \
             --headless \
             --task=Dextrah-Kuka-Allegro \
@@ -102,7 +49,7 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
 ```
 2. Multi-GPU training (4 GPUs, 1 node)
 ```bash
-        cd <dextrah_lab root>/dextrah_lab/rl_games
+        cd <DEXTRAH>/dextrah_lab/rl_games
         python -m torch.distributed.run --nnodes=1 --nproc_per_node=4 \
           train.py \
             --headless \
@@ -130,7 +77,7 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
 1. Training
 > The logger is default to WANDB and you may need to update the [entity](https://gitlab-master.nvidia.com/kvanwyk/dextrah-lab-internal/-/blame/main/dextrah_lab/tasks/dextrah_kuka_allegro/agents/rl_games_ppo_lstm_cfg.yaml?ref_type=heads#L129) for proper access. If you want to train with data augmentation, you can pass the `--data_aug` flag.
 ```bash
-        cd <dextrah_lab root>/dextrah_lab/distillation
+        cd <DEXTRAH>/dextrah_lab/distillation
         # NOTE: in general we should try to use a perfect square number of tiles
         python -m torch.distributed.run --nnodes=<num_nodes> --nproc_per_node=<num_gpus_per_node> \
           run_distillation.py \
@@ -177,3 +124,12 @@ extra args for data recording.
 **Note:** By default, most of the randomization are turned off for data recording.
 **Note:** The create video arg will create videos for the recorded data for easy data inspection.
 However, it will slow down the process. It's recommended to only use it for debugging.
+
+## Notes
+One can update dependences in deps.txt file, remove pyproject.toml and poetry.lock files, and regenerate them
+
+    cd <DEXTRAH>
+    rm pyproject.toml poetry.lock
+    poetry init --name "dextrah_lab" --no-interaction
+    xargs poetry add < deps.txt
+    poetry install
