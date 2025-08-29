@@ -274,7 +274,7 @@ class DextrahKukaAllegroEnv(DirectRLEnv):
                                       device=self.device)
         friction_coeff = friction_coeff.repeat((self.num_envs, 1))
         #self.robot.write_joint_friction_to_sim(friction_coeff, self.actuated_dof_indices, None)
-        self.robot.data.default_joint_friction = friction_coeff
+        self.robot.data.default_joint_friction_coeff = friction_coeff
 
     def find_num_unique_objects(self, objects_dir):
         module_path = os.path.dirname(__file__)
@@ -372,15 +372,15 @@ class DextrahKukaAllegroEnv(DirectRLEnv):
                        self.fabric_damping_gain]
         # Capture the forward pass of evaluating the fabric given the inputs and integrating one step
         # in time
-        self.g, self.fabric_q_new, self.fabric_qd_new, self.fabric_qdd_new =\
-            capture_fabric(self.kuka_allegro_fabric,
-                           self.fabric_q,
-                           self.fabric_qd,
-                           self.fabric_qdd,
-                           self.timestep,
-                           self.kuka_allegro_integrator,
-                           self.inputs,
-                           self.device)
+#        self.g, self.fabric_q_new, self.fabric_qd_new, self.fabric_qdd_new =\
+#            capture_fabric(self.kuka_allegro_fabric,
+#                           self.fabric_q,
+#                           self.fabric_qd,
+#                           self.fabric_qdd,
+#                           self.timestep,
+#                           self.kuka_allegro_integrator,
+#                           self.inputs,
+#                           self.device)
 
         # Preallocate tensors for fabrics state meant to go into obs buffer
         self.fabric_q_for_obs = torch.clone(self.fabric_q)
@@ -576,11 +576,7 @@ class DextrahKukaAllegroEnv(DirectRLEnv):
             )
             # add object to scene
             object_for_grasping = RigidObject(object_cfg)
-            set_prim_attribute_value(
-                prim_path=prim_path+"/baseLink",
-                attribute_name="physxArticulation:articulationEnabled",
-                value=False
-            )
+            
             prim = stage.GetPrimAtPath(prim_path)
             self.object_mat_prims.append(prim.GetChildren()[0].GetChildren()[0].GetChildren()[0])
 
@@ -638,14 +634,23 @@ class DextrahKukaAllegroEnv(DirectRLEnv):
         self.fabric_damping_gain.copy_(fabric_damping_gain)
 
         # Replay through the fabric graph with the latest action inputs
+        self.inputs = [self.hand_pca_targets, self.palm_pose_targets, "euler_zyx", # actions in
+                       self.fabric_q.detach(), self.fabric_qd.detach(), # fabric state
+                       self.object_ids, self.object_indicator, # world model
+                       self.fabric_damping_gain]
+        self.kuka_allegro_fabric.set_features(*self.inputs)
         for i in range(self.cfg.fabric_decimation):
-            # Evaluate the fabric via graph replay
-            self.g.replay()
+            self.fabric_q, self.fabric_qd, self.fabric_qdd = self.kuka_allegro_integrator.step(
+                self.fabric_q.detach(), self.fabric_qd.detach(), self.fabric_qdd.detach(), self.timestep
+                )
 
-            # Update the fabric states
-            self.fabric_q.copy_(self.fabric_q_new)
-            self.fabric_qd.copy_(self.fabric_qd_new)
-            self.fabric_qdd.copy_(self.fabric_qdd_new)
+#            # Evaluate the fabric via graph replay
+#            self.g.replay()
+#
+#            # Update the fabric states
+#            self.fabric_q.copy_(self.fabric_q_new)
+#            self.fabric_qd.copy_(self.fabric_qd_new)
+#            self.fabric_qdd.copy_(self.fabric_qdd_new)
 
         # Add F/T wrench to object
         self.apply_object_wrench()
