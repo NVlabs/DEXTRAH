@@ -1,19 +1,19 @@
 [tool.poetry]
-name = "dextrah-lab"
+name = "dextrah_lab"
 version = "0.1.0"
 description = ""
-authors = ["kavanwyk <56610403+kavanwyk@users.noreply.github.com>"]
-readme = "README.md"
+authors = ["Karl Van Wyk <kvanwyk@nvidia.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.10"
 torch = ">=2.4.0"
-warp-lang = ">=1.5.0,<1.8.0"
-pyyaml = "^6.0.2"
+warp-lang = ">=1.5.0,<1.8.2"
+PyYAML = "^6.0.2"
 urdfpy = "^0.0.22"
 numpy = ">=1.23.5,<2.0.0"
 
+[tool.poetry.dev-dependencies]
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
