@@ -576,7 +576,8 @@ class DextrahKukaAllegroEnv(DirectRLEnv):
             )
             # add object to scene
             object_for_grasping = RigidObject(object_cfg)
-            
+
+            # Get shaders
             prim = stage.GetPrimAtPath(prim_path)
             self.object_mat_prims.append(prim.GetChildren()[0].GetChildren()[0].GetChildren()[0])
 
