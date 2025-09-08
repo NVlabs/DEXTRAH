@@ -199,7 +199,7 @@ class Dagger:
 
         if self.rank == 0:
             self.writer = SummaryWriter(summaries_dir)
-            self.use_wandb = False
+            self.use_wandb = True
             parent_path = str(pathlib.Path(__file__).parent.resolve())
             summaries_dir = os.path.join(parent_path, summaries_dir)
             self.nn_dir = os.path.join(parent_path, nn_dir)
