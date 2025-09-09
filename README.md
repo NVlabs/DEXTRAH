@@ -50,7 +50,7 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
             env.adr_custom_cfg_dict.reward_weights.finger_curl_reg="[-0.01, -0.01]" \
             env.adr_custom_cfg_dict.reward_weights.lift_weight="[5.0, 0.0]" \
             env.max_pose_angle=45.0 \
-	    env.use_cuda_graph=True
+            env.use_cuda_graph=True
 ```
 ## DextrAH Camera-based FGP Student Distillation
 **Note**: Before starting the student training, you also need to download the visual texture data (textures.zip) and place its contents inside `dextrah_lab/assets` directory. Download the assets from [link](https://huggingface.co/datasets/nvidia/dextrah_textures/blob/main/textures.zip) and unzip its contents into the assets folder.
@@ -63,7 +63,7 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
         # NOTE: in general we should try to use a perfect square number of tiles
         python -m torch.distributed.run --nnodes=<num_nodes> --nproc_per_node=<num_gpus_per_node> \
           run_distillation.py \
-	    --headless
+            --headless
             --distributed \
             --task=Dextrah-Kuka-Allegro \
             --num_envs 256 env.distillation=True \
@@ -76,7 +76,7 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
             env.adr_custom_cfg_dict.fabric_damping.gain="[10.0, 20.0]" \
             env.adr_custom_cfg_dict.reward_weights.finger_curl_reg="[-0.01, -0.01]" \
             env.adr_custom_cfg_dict.reward_weights.lift_weight="[5.0, 0.0]" \
-	    env.use_cuda_graph=True
+            env.use_cuda_graph=True
 ```
 
 2. Single-GPU evaluation
