@@ -4,15 +4,13 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
 
 ## Installation without docker
 1. [Install](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/pip_installation.html) Isaac Sim, Isaac Lab following the local conda install route.
+
 **Note**: After you clone the Isaac Lab repository and before installation, checkout the tag `v2.2.1` before installation (can also work with `v2.0.2` with minor code changes):
 ```bash
         cd <IsaacLab>
         git checkout v2.2.1
 ```
-2. Install geometric fabrics from this repo within your new conda env
-```bash
-        https://github.com/NVlabs/FABRICS
-```
+2. Install geometric fabrics from this [repo](https://github.com/NVlabs/FABRICS) within your new conda env
 
 3. Install Dextrah for Isaac Lab within your new conda env
 ```bash
@@ -20,13 +18,15 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
         git lfs clone git@github.com:NVlabs/DEXTRAH.git
         cd <DEXTRAH>
         poetry install
-	or
-	python -m pip install -e .
+        or
+        python -m pip install -e .
 ```
 
 ## DextrAH Privileged FGP Teacher Training
 1. Single-GPU training
+
 **Note**: set `num_gpus_per_node` to the number of GPUs available, often 1. set `num_nodes` to number of training nodes (1 if running locally)
+
 **Note**: `env.use_cuda_graph=True` uses a cuda graph capture of fabrics and makes training faster. It may lead to cuda memory issues in some cases.
 ```bash
         cd <DEXTRAH>/dextrah_lab/rl_games
@@ -56,6 +56,7 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
 **Note**: Before starting the student training, you also need to download the visual texture data (textures.zip) and place its contents inside `dextrah_lab/assets` directory. Download the assets from [link](https://huggingface.co/datasets/nvidia/dextrah_textures/blob/main/textures.zip) and unzip its contents into the assets folder.
 
 1. Training
+
 **Note**: If you want to train with additional data augmentation, you can pass the `--data_aug` flag, but this is often unnecessary.
 ```bash
         cd <DEXTRAH>/dextrah_lab/distillation
@@ -107,6 +108,7 @@ extra args for data recording.
         --create_video
 ```
 **Note:** By default, most of the randomization are turned off for data recording.
+
 **Note:** The create video arg will create videos for the recorded data for easy data inspection.
 However, it will slow down the process. It's recommended to only use it for debugging.
 
