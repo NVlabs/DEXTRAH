@@ -21,6 +21,11 @@ DextrAH is a high-performance hand-arm grasping policy. This codebase provides t
         or
         python -m pip install -e .
 ```
+4. Ensure high enough `GLIBCXX_` can be found
+```bash
+        conda install -c conda-forge libstdcxx-ng
+        conda install -c conda-forge libgcc-ng=12 libstdcxx-ng=12
+```
 
 ## DextrAH Privileged FGP Teacher Training
 1. Single-GPU training
