@@ -117,6 +117,9 @@ class DextrahKukaAllegroEnvCfg(DirectRLEnvCfg):
     objects_dir = "replace_me"
     valid_objects_dir = ["visdex_objects"]
 
+    # Toggle for using cuda graph
+    use_cuda_graph = False
+
     # env
     sim_dt = 1/120.
     fabrics_dt = 1/60.
