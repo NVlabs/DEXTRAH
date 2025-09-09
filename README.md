@@ -2,7 +2,7 @@
 
 DextrAH is a high-performance hand-arm grasping policy. This codebase provides the machinery required to train such a policy in Isaac Lab starting with privileged RL training followed by online distillation that swaps the input space to camera data.
 
-## Installation without docker
+## Installation
 1. [Install](https://isaac-sim.github.io/IsaacLab/main/source/setup/installation/pip_installation.html) Isaac Sim, Isaac Lab following the local conda install route.
 
 **Note**: After you clone the Isaac Lab repository and before installation, checkout the tag `v2.2.1` before installation (can also work with `v2.0.2` with minor code changes):
@@ -114,9 +114,18 @@ However, it will slow down the process. It's recommended to only use it for debu
 
 ## Notes
 One can update dependences in deps.txt file, remove pyproject.toml and poetry.lock files, and regenerate them
-
+```bash
     cd <DEXTRAH>
     rm pyproject.toml poetry.lock
     poetry init --name "dextrah_lab" --no-interaction
     xargs poetry add < deps.txt
     poetry install
+```
+The `dextrah_lab/deployment_scripts` directory contains several reference scripts to show how to deploy the trained FGP, fabric controller, state machine, and camera calibration. These will not run out of the box because they depend on camera, PD controller, and robot driver ROS 2 nodes to be running, which are not included. Specifically, these are of interest
+```bash
+    camera_calibration.py
+    camera_transform_publisher.py
+    kuka_allegro_fabric.py
+    kuka_allegro_state_machine.py
+    kuka_allegro_stereo_fgp.py
+```
